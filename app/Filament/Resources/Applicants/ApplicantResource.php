@@ -20,27 +20,17 @@ use UnitEnum;
 class ApplicantResource extends Resource
 {
     protected static ?string $model = Applicant::class;
-
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedRectangleStack;
-
     protected static ?string $recordTitleAttribute = 'name';
-
     protected static UnitEnum|string|null $navigationGroup = 'Manajemen PPDB';
-
     protected static ?string $navigationLabel = 'Pendaftar';
-
     protected static ?string $pluralModelLabel = 'Pendaftar';
-
     protected static ?string $modelLabel = 'Pendaftar';
 
+    // Gunakan form untuk tampilan Create, Edit, dan View (read-only)
     public static function form(Schema $schema): Schema
     {
         return ApplicantForm::configure($schema);
-    }
-
-    public static function infolist(Schema $schema): Schema
-    {
-        return ApplicantInfolist::configure($schema);
     }
 
     public static function table(Table $table): Table

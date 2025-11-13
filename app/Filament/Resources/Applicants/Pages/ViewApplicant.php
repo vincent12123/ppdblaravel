@@ -16,4 +16,10 @@ class ViewApplicant extends ViewRecord
             EditAction::make(),
         ];
     }
+
+    // Gunakan form (bukan infolist) untuk menampilkan detail, semua field otomatis disabled
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        return $data;
+    }
 }
