@@ -45,12 +45,6 @@ class ApplicantResource extends Resource
         ];
     }
 
-
-    public static function infolist(Schema $schema): Schema
-    {
-        return ApplicantInfolist::configure($schema);
-    }
-
     public static function getPages(): array
     {
         return [
@@ -60,5 +54,4 @@ class ApplicantResource extends Resource
             'edit' => EditApplicant::route('/{record}/edit'),
         ];
     }
-
 }

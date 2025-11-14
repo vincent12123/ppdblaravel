@@ -110,19 +110,39 @@
                         <!-- Email -->
                         <div>
                             <label class="block text-gray-700 font-semibold mb-2">
-                                Email <span class="text-red-500">*</span>
+                                Email (Opsional)
                             </label>
-                            <input type="email" name="email" value="{{ old('email') }}" required
+                            <input type="email" name="email" value="{{ old('email') }}"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                 placeholder="contoh@email.com">
                         </div>
 
-                        <!-- No. HP -->
+                        <!-- No. HP Siswa -->
                         <div>
                             <label class="block text-gray-700 font-semibold mb-2">
-                                Nomor HP/WhatsApp <span class="text-red-500">*</span>
+                                Nomor HP/WhatsApp Siswa <span class="text-red-500">*</span>
                             </label>
                             <input type="tel" name="phone" value="{{ old('phone') }}" required maxlength="15"
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                placeholder="08xxxxxxxxxx">
+                        </div>
+
+                        <!-- Nama Orang Tua -->
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                Nama Orang Tua/Wali <span class="text-red-500">*</span>
+                            </label>
+                            <input type="text" name="parent_name" value="{{ old('parent_name') }}" required
+                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                placeholder="Nama Ayah/Ibu/Wali">
+                        </div>
+
+                        <!-- No. HP Orang Tua -->
+                        <div>
+                            <label class="block text-gray-700 font-semibold mb-2">
+                                Nomor HP Orang Tua/Wali <span class="text-red-500">*</span>
+                            </label>
+                            <input type="tel" name="parent_phone" value="{{ old('parent_phone') }}" required maxlength="15"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                 placeholder="08xxxxxxxxxx">
                         </div>
@@ -194,17 +214,6 @@
                                 @endforeach
                             </select>
                         </div>
-
-                        <!-- Rata-rata Rapor -->
-                        <div>
-                            <label class="block text-gray-700 font-semibold mb-2">
-                                Rata-rata Nilai Rapor (Opsional)
-                            </label>
-                            <input type="number" name="rapor_average" value="{{ old('rapor_average') }}" step="0.01" min="0" max="100"
-                                class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
-                                placeholder="Contoh: 85.5">
-                            <p class="text-sm text-gray-500 mt-1">Rata-rata nilai rapor semester 1-5</p>
-                        </div>
                     </div>
                 </div>
 
@@ -215,13 +224,20 @@
                         Upload Dokumen
                     </h2>
 
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-6">
+                        <p class="text-sm text-blue-700">
+                            <i class="fas fa-info-circle mr-2"></i>
+                            <strong>Catatan:</strong> Upload dokumen bersifat opsional. Anda dapat melengkapi dokumen di kemudian hari.
+                        </p>
+                    </div>
+
                     <div class="space-y-6">
                         <!-- Pas Foto -->
                         <div>
                             <label class="block text-gray-700 font-semibold mb-2">
-                                Pas Foto 3x4 <span class="text-red-500">*</span>
+                                Pas Foto 3x4 (Opsional)
                             </label>
-                            <input type="file" name="photo" required accept="image/*"
+                            <input type="file" name="photo" accept="image/*"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                             <p class="text-sm text-gray-500 mt-1">Format: JPG, PNG. Max 2MB</p>
                         </div>
@@ -229,9 +245,9 @@
                         <!-- Ijazah -->
                         <div>
                             <label class="block text-gray-700 font-semibold mb-2">
-                                Ijazah/STTB SMP <span class="text-red-500">*</span>
+                                Ijazah/STTB SMP (Opsional)
                             </label>
-                            <input type="file" name="ijazah" required accept=".pdf,image/*"
+                            <input type="file" name="ijazah" accept=".pdf,image/*"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                             <p class="text-sm text-gray-500 mt-1">Format: PDF, JPG, PNG. Max 2MB</p>
                         </div>
@@ -239,9 +255,9 @@
                         <!-- Kartu Keluarga -->
                         <div>
                             <label class="block text-gray-700 font-semibold mb-2">
-                                Kartu Keluarga (KK) <span class="text-red-500">*</span>
+                                Kartu Keluarga (KK) (Opsional)
                             </label>
-                            <input type="file" name="kartu_keluarga" required accept=".pdf,image/*"
+                            <input type="file" name="kartu_keluarga" accept=".pdf,image/*"
                                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent">
                             <p class="text-sm text-gray-500 mt-1">Format: PDF, JPG, PNG. Max 2MB</p>
                         </div>

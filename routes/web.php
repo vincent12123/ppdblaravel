@@ -21,6 +21,20 @@ Route::get('/pendaftaran/sukses/{registration_number}', [RegistrationController:
 Route::get('/cek-status', [RegistrationController::class, 'checkStatus'])->name('registration.checkStatus');
 Route::post('/cek-status', [RegistrationController::class, 'showStatus'])->name('registration.showStatus');
 
+// Document Download Route (untuk admin)
+Route::middleware(['auth'])->group(function () {
+    Route::get('/documents/{document}/download', function ($id) {
+        $document = \App\Models\Document::findOrFail($id);
+        $filePath = storage_path('app/public/' . $document->file_path);
+
+        if (!file_exists($filePath)) {
+            abort(404, 'File tidak ditemukan');
+        }
+
+        return response()->download($filePath, basename($document->file_path));
+    })->name('documents.download');
+});
+
 // Login redirect to Filament admin
 Route::get('/login', function () {
     return redirect(Filament::getLoginUrl());

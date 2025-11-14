@@ -75,49 +75,29 @@ class ApplicantsTable
                     ->limit(15)
                     ->placeholder('Belum ditetapkan'),
 
-                TextColumn::make('rapor_average')
-                    ->label('Rata-rata Rapor')
-                    ->numeric(decimalPlaces: 2)
-                    ->sortable()
-                    ->toggleable(),
+
 
                 TextColumn::make('status')
                     ->label('Status')
                     ->badge()
                     ->color(fn (string $state): string => match ($state) {
-                        'draft' => 'gray',
-                        'submitted' => 'info',
-                        'reviewed' => 'warning',
+                        'registered' => 'info',
+                        'verified' => 'warning',
                         'accepted' => 'success',
                         'rejected' => 'danger',
-                        default => 'secondary',
+                        'registered_final' => 'primary',
+                        default => 'gray',
                     })
                     ->formatStateUsing(fn (string $state): string => match ($state) {
-                        'draft' => 'Draft',
-                        'submitted' => 'Mendaftar',
-                        'reviewed' => 'Review',
+                        'registered' => 'Terdaftar',
+                        'verified' => 'Terverifikasi',
                         'accepted' => 'Diterima',
                         'rejected' => 'Ditolak',
-                        default => $state,
+                        'registered_final' => 'Registrasi Final',
+                        default => ucfirst($state),
                     }),
 
-                IconColumn::make('documents_verified')
-                    ->label('Dok.')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle')
-                    ->trueColor('success')
-                    ->falseColor('danger')
-                    ->toggleable(),
 
-                IconColumn::make('payment_verified')
-                    ->label('Bayar')
-                    ->boolean()
-                    ->trueIcon('heroicon-o-check-circle')
-                    ->falseIcon('heroicon-o-x-circle')
-                    ->trueColor('success')
-                    ->falseColor('danger')
-                    ->toggleable(),
 
                 TextColumn::make('registered_at')
                     ->label('Tgl. Daftar')
@@ -141,11 +121,11 @@ class ApplicantsTable
                 SelectFilter::make('status')
                     ->label('Status Pendaftaran')
                     ->options([
-                        'draft' => 'Draft',
-                        'submitted' => 'Telah Mendaftar',
-                        'reviewed' => 'Sedang Direview',
+                        'registered' => 'Terdaftar',
+                        'verified' => 'Terverifikasi',
                         'accepted' => 'Diterima',
                         'rejected' => 'Ditolak',
+                        'registered_final' => 'Registrasi Final',
                     ])
                     ->multiple(),
 

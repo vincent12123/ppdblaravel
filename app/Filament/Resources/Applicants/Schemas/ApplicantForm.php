@@ -63,13 +63,25 @@ class ApplicantForm
                     ->columns(2)
                     ->schema([
                         TextInput::make('email')
-                            ->label('Email')
+                            ->label('Email (Opsional)')
                             ->email()
                             ->maxLength(255),
 
                         TextInput::make('phone')
-                            ->label('Nomor Telepon/HP')
+                            ->label('Nomor Telepon/HP Siswa')
                             ->tel()
+                            ->required()
+                            ->maxLength(15),
+
+                        TextInput::make('parent_name')
+                            ->label('Nama Orang Tua/Wali')
+                            ->required()
+                            ->maxLength(255),
+
+                        TextInput::make('parent_phone')
+                            ->label('Nomor HP Orang Tua/Wali')
+                            ->tel()
+                            ->required()
                             ->maxLength(15),
 
                         Textarea::make('address')
@@ -108,48 +120,83 @@ class ApplicantForm
                             ->preload()
                             ->placeholder('Belum ditetapkan')
                             ->columnSpanFull(),
-
-                        TextInput::make('rapor_average')
-                            ->label('Rata-rata Rapor')
-                            ->numeric()
-                            ->step(0.01)
-                            ->placeholder('Contoh: 85.5'),
                     ]),
 
-                Section::make('Status Verifikasi & Pendaftaran')
-                    ->columns(3)
+                Section::make('Status Pendaftaran')
+                    ->columns(2)
                     ->schema([
-                        Toggle::make('documents_verified')
-                            ->label('Dokumen Terverifikasi')
-                            ->onColor('success')
-                            ->offColor('danger')
-                            ->inline(false)
-                            ->helperText('Status verifikasi kelengkapan dokumen pendaftar.'),
-
-                        Toggle::make('payment_verified')
-                            ->label('Pembayaran Terverifikasi')
-                            ->onColor('success')
-                            ->offColor('danger')
-                            ->inline(false)
-                            ->helperText('Status verifikasi pembayaran pendaftaran.'),
-
                         Select::make('status')
                             ->label('Status Pendaftaran')
                             ->options([
-                                'draft' => 'Draft',
-                                'submitted' => 'Telah Mendaftar',
-                                'reviewed' => 'Sedang Direview',
+                                'registered' => 'Terdaftar (Baru)',
+                                'verified' => 'Terverifikasi',
                                 'accepted' => 'Diterima (Lulus Seleksi)',
                                 'rejected' => 'Ditolak',
+                                'registered_final' => 'Registrasi Final',
                             ])
-                            ->default('submitted')
+                            ->default('registered')
                             ->required(),
 
                         DateTimePicker::make('registered_at')
                             ->label('Waktu Pendaftaran')
                             ->native(false)
                             ->displayFormat('d F Y H:i')
-                            ->disabled()
+                            ->disabled(),
+                    ]),
+
+                // Section untuk menampilkan dokumen yang diupload
+                Section::make('Dokumen yang Diupload')
+                    ->description('Klik "View" pada baris untuk melihat preview dokumen')
+                    ->icon('heroicon-o-document-text')
+                    ->collapsed()
+                    ->schema([
+                        \Filament\Forms\Components\Placeholder::make('documents_list')
+                            ->label('')
+                            ->content(function ($record) {
+                                if (!$record || !$record->documents()->exists()) {
+                                    return 'Belum ada dokumen yang diupload.';
+                                }
+
+                                $html = '<div class="space-y-2">';
+                                foreach ($record->documents as $document) {
+                                    $statusIcon = $document->is_verified
+                                        ? '<span class="text-green-600">✓</span>'
+                                        : '<span class="text-red-600">✗</span>';
+
+                                    $typeLabel = match($document->type) {
+                                        'foto' => 'Foto 3x4',
+                                        'ijazah' => 'Ijazah/STTB',
+                                        'kartu_keluarga' => 'Kartu Keluarga',
+                                        'akta_kelahiran' => 'Akta Kelahiran',
+                                        'rapor' => 'Rapor',
+                                        default => ucfirst($document->type),
+                                    };
+
+                                    $viewUrl = route('filament.admin.resources.documents.view', ['record' => $document->id]);
+                                    $previewUrl = asset('storage/' . $document->file_path);
+
+                                    $html .= "<div class='flex items-center justify-between p-3 bg-gray-50 rounded-lg'>";
+                                    $html .= "<div class='flex items-center gap-3'>";
+                                    $html .= "{$statusIcon}";
+                                    $html .= "<span class='font-medium'>{$typeLabel}</span>";
+                                    $html .= "<span class='text-sm text-gray-500'>" . basename($document->file_path) . "</span>";
+                                    $html .= "</div>";
+                                    $html .= "<div class='flex gap-2'>";
+                                    $html .= "<a href='{$previewUrl}' target='_blank' class='text-blue-600 hover:text-blue-800 text-sm'>Preview</a>";
+                                    $html .= "<a href='{$viewUrl}' target='_blank' class='text-indigo-600 hover:text-indigo-800 text-sm'>Detail</a>";
+                                    $html .= "</div>";
+                                    $html .= "</div>";
+
+                                    if ($document->verification_notes) {
+                                        $html .= "<div class='ml-8 text-sm text-orange-600 italic'>";
+                                        $html .= "Catatan: " . e($document->verification_notes);
+                                        $html .= "</div>";
+                                    }
+                                }
+                                $html .= '</div>';
+
+                                return new \Illuminate\Support\HtmlString($html);
+                            })
                             ->columnSpanFull(),
                     ]),
             ]);

@@ -127,6 +127,40 @@ class DocumentsTable
                     ->preload(),
             ])
             ->recordActions([
+                // Action untuk preview/download file
+                \Filament\Tables\Actions\Action::make('preview')
+                    ->label('Preview')
+                    ->icon('heroicon-o-eye')
+                    ->color('info')
+                    ->url(fn (Document $record): string => asset('storage/' . $record->file_path))
+                    ->openUrlInNewTab(),
+
+                \Filament\Tables\Actions\Action::make('verify')
+                    ->label('Verifikasi')
+                    ->icon('heroicon-o-check-circle')
+                    ->color('success')
+                    ->visible(fn (Document $record): bool => !$record->is_verified)
+                    ->requiresConfirmation()
+                    ->action(fn (Document $record) => $record->update(['is_verified' => true])),
+
+                \Filament\Tables\Actions\Action::make('reject')
+                    ->label('Tolak')
+                    ->icon('heroicon-o-x-circle')
+                    ->color('danger')
+                    ->visible(fn (Document $record): bool => $record->is_verified)
+                    ->form([
+                        \Filament\Forms\Components\Textarea::make('verification_notes')
+                            ->label('Catatan Penolakan')
+                            ->required()
+                            ->rows(3)
+                    ])
+                    ->action(function (Document $record, array $data) {
+                        $record->update([
+                            'is_verified' => false,
+                            'verification_notes' => $data['verification_notes']
+                        ]);
+                    }),
+
                 ViewAction::make(),
                 EditAction::make(),
             ])

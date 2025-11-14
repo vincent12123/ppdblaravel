@@ -53,8 +53,10 @@ class ApplicantSeeder extends Seeder
             $applicant->nisn = (string) $faker->unique()->numberBetween(1000000000, 9999999999);
             $applicant->birth_date = $faker->dateTimeBetween('-17 years', '-14 years')->format('Y-m-d');
             $applicant->gender = $faker->randomElement(['male', 'female']);
-            $applicant->email = $faker->unique()->safeEmail();
+            $applicant->email = $faker->boolean(70) ? $faker->unique()->safeEmail() : null; // 70% isi email, 30% kosong
             $applicant->phone = '08' . $faker->numberBetween(100000000, 999999999);
+            $applicant->parent_name = $faker->name();
+            $applicant->parent_phone = '08' . $faker->numberBetween(100000000, 999999999);
             $applicant->address = $faker->address();
             $applicant->origin_school = $faker->randomElement($originSchools);
             $applicant->major_choice_1 = $choice1;
@@ -62,10 +64,6 @@ class ApplicantSeeder extends Seeder
             $applicant->major_choice_3 = $choice3;
             $applicant->status = $status;
             $applicant->assigned_major = $status === 'accepted' ? $choice1 : null;
-            // Catatan: kolom rapor_average bertipe decimal(3,2) -> gunakan skala 1.00 - 9.99
-            $applicant->rapor_average = $faker->randomFloat(2, 7.00, 9.90);
-            $applicant->documents_verified = $faker->boolean(60);
-            $applicant->payment_verified = $faker->boolean(50);
             $applicant->registered_at = now()->subDays($faker->numberBetween(0, 30));
             $applicant->save();
 
