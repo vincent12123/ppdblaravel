@@ -50,6 +50,11 @@ Aplikasi PPDB ini dirancang untuk memudahkan proses pendaftaran siswa baru secar
     - Export data terpilih (bulk action)
     - Format Excel dengan styling profesional
     - Nama file otomatis dengan timestamp
+  - **Notifikasi WhatsApp (Fonnte) Beta:**
+    - Kirim pesan otomatis saat pendaftar diterima / ditolak
+    - Template pesan dapat disesuaikan
+    - Pengaturan token & aktif/nonaktif di halaman Pengaturan
+    - Uji kirim langsung dari panel admin
 
 - **Manajemen Jurusan (Majors)**
   - CRUD jurusan
@@ -260,6 +265,7 @@ ppdb/
 
 - [ ] Notifikasi Email/WhatsApp otomatis
 - [x] Export data pendaftar (Excel) ✅
+- [x] Integrasi WhatsApp Fonnte (Beta)
 - [ ] Import data pendaftar dari Excel
 - [ ] Export PDF dengan template custom
 - [ ] Sistem pembayaran online
@@ -299,7 +305,68 @@ File export berisi kolom-kolom berikut:
 
 **Header** dengan background biru dan teks putih, serta **column width** yang sudah disesuaikan untuk kemudahan membaca.
 
-## 📝 Lisensi
+## � Integrasi WhatsApp (Fonnte)
+
+### Fitur
+- Kirim otomatis saat status diterima / ditolak.
+- Template dinamis dengan placeholder: `{name}`, `{reg}`, `{major}`.
+- Halaman pengaturan: `Pengaturan > Pengaturan WhatsApp (Fonnte)`.
+- Tes kirim manual melalui form uji.
+
+### Environment (opsional)
+Tambahkan ke file `.env` jika ingin override:
+```
+FONNTE_ENABLED=true
+FONNTE_TOKEN=your-token-here
+FONNTE_BASE_URL=https://api.fonnte.com
+FONNTE_TIMEOUT=15
+```
+
+### Pengaturan Template
+Disimpan di tabel `settings` dengan key:
+- `fonnte_template_registered`
+- `fonnte_template_accepted`
+- `fonnte_template_rejected`
+
+Contoh default:
+```
+"Halo {name}, selamat! Anda DITERIMA di jurusan {major}. Nomor registrasi: {reg}."
+"Halo {name}, mohon maaf Anda belum diterima. Tetap semangat! Nomor registrasi: {reg}."
+"Halo {name}, pendaftaran Anda berhasil. Nomor registrasi: {reg}."
+```
+
+### Cara Kerja
+1. Admin klik Terima / Tolak di halaman detail pendaftar.
+2. Sistem cek: WhatsApp aktif? token tersedia? nomor ada?
+3. Template dirender & dikirim via Fonnte API.
+4. (Opsional) Dapat dialihkan ke queue job `SendWhatsAppMessage`.
+
+### Queue (Opsional)
+Aktifkan queue agar pengiriman tidak lambat:
+```
+php artisan queue:work
+```
+
+### Catatan Keamanan
+- Token disimpan dalam settings (bisa dienkripsi manual jika perlu).
+- Jangan commit token ke Git.
+- Rate limit mengikuti kebijakan Fonnte.
+
+### Troubleshooting
+| Masalah | Penyebab | Solusi |
+|---------|----------|--------|
+| Tidak terkirim | Token salah | Cek di halaman pengaturan |
+| Nomor salah format | Tidak diawali 62 | Pakai format 0812… (otomatis dikonversi) |
+| Lambat | Queue tidak aktif | Jalankan queue worker |
+| Placeholder kosong | Data tidak tersedia | Pastikan kolom major terisi saat diterima |
+
+### Roadmap WA
+- Kirim saat registrasi (belum diaktifkan)
+- Log status pengiriman di database
+- Template multiple bahasa
+- Broadcast pengumuman
+
+## �📝 Lisensi
 
 Proyek ini adalah open-source software yang dilisensikan di bawah [MIT license](https://opensource.org/licenses/MIT).
 

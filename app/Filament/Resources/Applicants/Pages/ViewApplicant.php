@@ -7,6 +7,7 @@ use Filament\Actions\Action;
 use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Notifications\Notification;
+use App\Services\FonnteClient;
 
 class ViewApplicant extends ViewRecord
 {
@@ -40,6 +41,17 @@ class ViewApplicant extends ViewRecord
                         ->success()
                         ->body('Pendaftar telah diterima.')
                         ->send();
+
+                    // Kirim WhatsApp jika diaktifkan
+                    $client = new FonnteClient();
+                    if ($client->enabled() && $this->record->phone) {
+                        $message = $client->renderTemplate('accepted', [
+                            'name' => $this->record->name,
+                            'reg' => $this->record->registration_number,
+                            'major' => $this->record->assignedMajor?->name ?? 'Terpilih',
+                        ]);
+                        $client->send($this->record->phone, $message);
+                    }
                 }),
 
             // Tombol Tolak Pendaftar
@@ -69,6 +81,16 @@ class ViewApplicant extends ViewRecord
                         ->warning()
                         ->body('Status telah diupdate.')
                         ->send();
+
+                    // Kirim WhatsApp jika diaktifkan
+                    $client = new FonnteClient();
+                    if ($client->enabled() && $this->record->phone) {
+                        $message = $client->renderTemplate('rejected', [
+                            'name' => $this->record->name,
+                            'reg' => $this->record->registration_number,
+                        ]);
+                        $client->send($this->record->phone, $message);
+                    }
                 }),
 
             EditAction::make()

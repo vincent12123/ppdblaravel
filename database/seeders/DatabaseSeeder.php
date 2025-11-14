@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
            MajorSeeder::class,
            ApplicantSeeder::class,
            AnnouncementSeeder::class,
+            SettingSeeder::class,
        ]);
     }
 }
