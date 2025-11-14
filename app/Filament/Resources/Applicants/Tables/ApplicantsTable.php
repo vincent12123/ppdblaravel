@@ -2,16 +2,19 @@
 
 namespace App\Filament\Resources\Applicants\Tables;
 
+use App\Exports\ApplicantsExport;
+use Filament\Actions\BulkAction;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ViewAction;
-use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\Filter;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ApplicantsTable
 {
@@ -140,25 +143,39 @@ class ApplicantsTable
                     ->relationship('assignedMajor', 'name')
                     ->searchable()
                     ->preload(),
-
-                Filter::make('documents_verified')
-                    ->label('Dokumen Terverifikasi')
-                    ->query(fn (Builder $query): Builder => $query->where('documents_verified', true)),
-
-                Filter::make('payment_verified')
-                    ->label('Pembayaran Terverifikasi')
-                    ->query(fn (Builder $query): Builder => $query->where('payment_verified', true)),
-
-                Filter::make('verified_all')
-                    ->label('Terverifikasi Lengkap')
-                    ->query(fn (Builder $query): Builder => $query->where('documents_verified', true)->where('payment_verified', true)),
             ])
             ->recordActions([
                 ViewAction::make(),
                 EditAction::make(),
             ])
-            ->toolbarActions([
+            ->bulkActions([
                 BulkActionGroup::make([
+                    BulkAction::make('export')
+                        ->label('Export Selected')
+                        ->icon('heroicon-o-arrow-down-tray')
+                        ->color('success')
+                        ->action(function (Collection $records) {
+                            $filename = 'data-pendaftar-selected-' . now()->format('Y-m-d-His') . '.xlsx';
+
+                            return Excel::download(
+                                new class($records) extends ApplicantsExport {
+                                    private $records;
+
+                                    public function __construct($records)
+                                    {
+                                        parent::__construct();
+                                        $this->records = $records;
+                                    }
+
+                                    public function collection()
+                                    {
+                                        return $this->records;
+                                    }
+                                },
+                                $filename
+                            );
+                        })
+                        ->deselectRecordsAfterCompletion(),
                     DeleteBulkAction::make(),
                 ]),
             ])

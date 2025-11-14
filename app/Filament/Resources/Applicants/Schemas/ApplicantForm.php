@@ -172,7 +172,6 @@ class ApplicantForm
                                         default => ucfirst($document->type),
                                     };
 
-                                    $viewUrl = route('filament.admin.resources.documents.view', ['record' => $document->id]);
                                     $previewUrl = asset('storage/' . $document->file_path);
 
                                     $html .= "<div class='flex items-center justify-between p-3 bg-gray-50 rounded-lg'>";
@@ -183,7 +182,6 @@ class ApplicantForm
                                     $html .= "</div>";
                                     $html .= "<div class='flex gap-2'>";
                                     $html .= "<a href='{$previewUrl}' target='_blank' class='text-blue-600 hover:text-blue-800 text-sm'>Preview</a>";
-                                    $html .= "<a href='{$viewUrl}' target='_blank' class='text-indigo-600 hover:text-indigo-800 text-sm'>Detail</a>";
                                     $html .= "</div>";
                                     $html .= "</div>";
 

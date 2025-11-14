@@ -12,19 +12,33 @@ class AnnouncementInfolist
     {
         return $schema
             ->components([
-                TextEntry::make('title'),
+                TextEntry::make('title')
+                    ->label('Judul')
+                    ->weight('bold')
+                    ->size('lg'),
+
                 TextEntry::make('content')
+                    ->label('Konten')
+                    ->html()
                     ->columnSpanFull(),
+
                 IconEntry::make('is_active')
+                    ->label('Status Aktif')
                     ->boolean(),
+
                 TextEntry::make('published_at')
-                    ->dateTime()
+                    ->label('Tanggal Publikasi')
+                    ->dateTime('d F Y, H:i')
                     ->placeholder('-'),
+
                 TextEntry::make('created_at')
-                    ->dateTime()
+                    ->label('Dibuat Pada')
+                    ->dateTime('d F Y, H:i')
                     ->placeholder('-'),
+
                 TextEntry::make('updated_at')
-                    ->dateTime()
+                    ->label('Diperbarui Pada')
+                    ->dateTime('d F Y, H:i')
                     ->placeholder('-'),
             ]);
     }
