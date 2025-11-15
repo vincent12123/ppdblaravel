@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Penerimaan Peserta Didik Baru (PPDB) Online - SMK">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'PPDB Online - SMK')</title>
 
     <!-- Tailwind CSS CDN -->
@@ -96,7 +97,8 @@
     @include('landing.partials.footer')
 
     <!-- Chatbot Widget -->
-    @include('landing.partials.chatbot')
+    @php($whatsappNumber = \App\Models\Setting::get('school_whatsapp', '6281234567890'))
+    @include('landing.partials.chatbot', ['whatsappNumber' => $whatsappNumber])
 
     @stack('scripts')
 </body>

@@ -4,12 +4,12 @@
     <button id="chatbot-toggle" class="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-2xl hover:shadow-green-500/50 hover:scale-110 transition-all duration-300 relative group">
         <i class="fas fa-comment-dots text-2xl" id="chat-icon"></i>
         <i class="fas fa-times text-2xl hidden" id="close-icon"></i>
-        
+
         <!-- Notification Badge -->
         <span id="unread-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold hidden animate-bounce">
             1
         </span>
-        
+
         <!-- Pulse Animation -->
         <span class="absolute inset-0 rounded-full bg-green-500 animate-ping opacity-75"></span>
     </button>
@@ -76,10 +76,10 @@
         <!-- Input Area -->
         <div class="border-t border-gray-200 p-4 bg-white">
             <form id="chat-form" class="flex items-center space-x-2">
-                <input 
-                    type="text" 
-                    id="chat-input" 
-                    placeholder="Ketik pesan Anda..." 
+                <input
+                    type="text"
+                    id="chat-input"
+                    placeholder="Ketik pesan Anda..."
                     class="flex-1 border border-gray-300 rounded-full px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
                     autocomplete="off"
                 >
@@ -88,8 +88,8 @@
                 </button>
             </form>
             <div class="mt-2 text-center">
-                <a href="https://wa.me/{{ $whatsappNumber ?? '6281234567890' }}?text=Halo,%20saya%20ingin%20bertanya%20tentang%20PPDB" 
-                   target="_blank" 
+                <a href="https://wa.me/{{ $whatsappNumber ?? '6281234567890' }}?text=Halo,%20saya%20ingin%20bertanya%20tentang%20PPDB"
+                   target="_blank"
                    class="inline-flex items-center space-x-2 text-xs text-gray-500 hover:text-green-600 transition">
                     <i class="fab fa-whatsapp text-lg"></i>
                     <span>Chat via WhatsApp</span>
@@ -110,7 +110,7 @@
             transform: translateY(0);
         }
     }
-    
+
     .animate-fade-in {
         animation: fadeIn 0.5s ease-out;
     }
@@ -177,63 +177,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatInput = document.getElementById('chat-input');
     const chatMessages = document.getElementById('chat-messages');
     const quickReplyBtns = document.querySelectorAll('.quick-reply-btn');
-
-    // FAQ Database
-    const faqDatabase = {
-        'cara daftar': `Untuk mendaftar PPDB Online, ikuti langkah berikut:
-
-1. Buka halaman <a href="{{ route('registration.create') }}" class="text-blue-600 underline">Pendaftaran</a>
-2. Isi formulir dengan lengkap
-3. Upload dokumen persyaratan
-4. Klik tombol "Daftar Sekarang"
-5. Simpan nomor registrasi Anda
-
-Sangat mudah! 🎓`,
-        'persyaratan': `Persyaratan pendaftaran PPDB:
-
-📄 <strong>Dokumen Wajib:</strong>
-• Fotokopi Ijazah/SKL
-• Fotokopi Kartu Keluarga
-• Fotokopi Akta Kelahiran
-• Pas foto terbaru (3x4)
-• Surat keterangan sehat
-
-💡 Semua dokumen dalam format PDF/JPG, maksimal 2MB`,
-        'jurusan': `Kami memiliki beberapa program keahlian unggulan:
-
-🎓 <a href="{{ route('majors') }}" class="text-blue-600 underline">Lihat semua jurusan</a>
-
-Setiap jurusan memiliki kuota terbatas, jadi daftar sekarang!`,
-        'jadwal': `📅 <strong>Jadwal Pendaftaran PPDB {{ date('Y') }}</strong>
-
-• Pendaftaran: 1 Juni - 31 Juli {{ date('Y') }}
-• Seleksi: 1-10 Agustus {{ date('Y') }}
-• Pengumuman: 15 Agustus {{ date('Y') }}
-• Daftar Ulang: 20-25 Agustus {{ date('Y') }}
-
-⏰ Jangan sampai terlewat!`,
-        'cek status': `Untuk cek status pendaftaran:
-
-1. Kunjungi <a href="{{ route('registration.checkStatus') }}" class="text-blue-600 underline">halaman cek status</a>
-2. Masukkan nomor registrasi Anda
-3. Klik "Cek Status"
-
-Atau hubungi admin jika ada kendala.`,
-        'kontak': `📞 <strong>Hubungi Kami:</strong>
-
-• WhatsApp: <a href="https://wa.me/{{ $whatsappNumber ?? '6281234567890' }}" target="_blank" class="text-green-600 underline">{{ $whatsappNumber ?? '081234567890' }}</a>
-• Email: ppdb@sekolah.sch.id
-• Telepon: (021) 12345678
-
-⏰ Senin-Jumat: 08:00 - 16:00 WIB`
-    };
+    const chatAiUrl = "{{ route('chat.ai') }}";
+    const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     // Toggle chatbot
     function toggleChatbot() {
         widget.classList.toggle('hidden');
         chatIcon.classList.toggle('hidden');
         closeIcon.classList.toggle('hidden');
-        
+
         if (!widget.classList.contains('hidden')) {
             chatInput.focus();
             document.getElementById('unread-badge').classList.add('hidden');
@@ -247,7 +199,7 @@ Atau hubungi admin jika ada kendala.`,
     function addMessage(text, isUser = false) {
         const messageDiv = document.createElement('div');
         messageDiv.className = `flex items-start space-x-2 animate-fade-in ${isUser ? 'justify-end' : ''}`;
-        
+
         if (isUser) {
             messageDiv.innerHTML = `
                 <div class="bg-green-500 text-white rounded-2xl rounded-tr-none p-3 shadow-sm max-w-[80%]">
@@ -264,7 +216,7 @@ Atau hubungi admin jika ada kendala.`,
                 </div>
             `;
         }
-        
+
         chatMessages.appendChild(messageDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
     }
@@ -297,61 +249,57 @@ Atau hubungi admin jika ada kendala.`,
         }
     }
 
-    // Get bot response
-    function getBotResponse(userMessage) {
-        const lowerMessage = userMessage.toLowerCase();
-        
-        for (const [key, value] of Object.entries(faqDatabase)) {
-            if (lowerMessage.includes(key)) {
-                return value;
+    // Call AI backend
+    async function getAiResponse(message) {
+        try {
+            const res = await fetch(chatAiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({ message })
+            });
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                return data.reply || 'Maaf, terjadi kesalahan pada asisten AI.';
             }
+            const data = await res.json();
+            return data.reply;
+        } catch (e) {
+            return 'Maaf, tidak dapat terhubung ke server. Coba lagi nanti.';
         }
-        
-        return `Maaf, saya belum mengerti pertanyaan Anda. 😅<br><br>
-                Silakan pilih salah satu topik di bawah, atau hubungi kami via WhatsApp untuk bantuan langsung.<br><br>
-                <a href="https://wa.me/{{ $whatsappNumber ?? '6281234567890' }}?text=${encodeURIComponent(userMessage)}" 
-                   target="_blank" 
-                   class="inline-flex items-center space-x-2 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition text-sm">
-                    <i class="fab fa-whatsapp"></i>
-                    <span>Chat via WhatsApp</span>
-                </a>`;
     }
 
     // Handle form submission
-    chatForm.addEventListener('submit', function(e) {
+    chatForm.addEventListener('submit', async function(e) {
         e.preventDefault();
-        
+
         const userMessage = chatInput.value.trim();
         if (!userMessage) return;
-        
+
         // Add user message
         addMessage(userMessage, true);
         chatInput.value = '';
-        
+
         // Show typing indicator
         showTypingIndicator();
-        
-        // Simulate bot response delay
-        setTimeout(function() {
-            removeTypingIndicator();
-            const botResponse = getBotResponse(userMessage);
-            addMessage(botResponse, false);
-        }, 1000 + Math.random() * 1000);
+        const botResponse = await getAiResponse(userMessage);
+        removeTypingIndicator();
+        addMessage(botResponse, false);
     });
 
     // Handle quick reply buttons
     quickReplyBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', async function() {
             const question = this.dataset.question;
             addMessage(question, true);
-            
+
             showTypingIndicator();
-            
-            setTimeout(function() {
-                removeTypingIndicator();
-                const botResponse = getBotResponse(question);
-                addMessage(botResponse, false);
-            }, 800);
+            const botResponse = await getAiResponse(question);
+            removeTypingIndicator();
+            addMessage(botResponse, false);
         });
     });
 

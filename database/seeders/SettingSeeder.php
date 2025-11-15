@@ -33,6 +33,12 @@ class SettingSeeder extends Seeder
             'school_instagram' => '',
             'school_youtube' => '',
             'school_whatsapp' => '',
+
+            // Chatbot (Gemini) defaults
+            'gemini_enabled' => 'false',
+            'gemini_api_key' => null,
+            'gemini_model' => 'gemini-1.5-flash',
+            'gemini_system_instruction' => \App\Http\Controllers\ChatbotController::defaultSystemInstruction(),
         ];
 
         foreach ($defaults as $key => $value) {
