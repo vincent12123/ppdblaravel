@@ -25,7 +25,7 @@ class WhatsAppSettings extends Page
     protected static ?int $navigationSort = 50;
     protected static ?string $title = 'Pengaturan WhatsApp (Fonnte)';
 
-    public ?string $fonnte_enabled = null;
+    public bool $fonnte_enabled = false;
     public ?string $fonnte_token = null;
     public ?string $fonnte_template_registered = null;
     public ?string $fonnte_template_accepted = null;
@@ -35,7 +35,7 @@ class WhatsAppSettings extends Page
 
     public function mount(): void
     {
-        $this->fonnte_enabled = Setting::get('fonnte_enabled', 'false');
+    $this->fonnte_enabled = Setting::get('fonnte_enabled', 'false') === 'true';
         $this->fonnte_token = Setting::get('fonnte_token');
         $this->fonnte_template_registered = Setting::get('fonnte_template_registered') ?? config('fonnte.templates.registered');
         $this->fonnte_template_accepted = Setting::get('fonnte_template_accepted') ?? config('fonnte.templates.accepted');
@@ -106,7 +106,7 @@ class WhatsAppSettings extends Page
                 ->icon('heroicon-o-paper-airplane')
                 ->color('success')
                 ->action(fn () => $this->sendTestMessage())
-                ->disabled(fn (): bool => blank($this->test_phone) || blank($this->fonnte_token)),
+                ->disabled(fn (): bool => blank($this->test_phone) || blank($this->fonnte_token) || ! $this->fonnte_enabled),
         ];
     }
 
