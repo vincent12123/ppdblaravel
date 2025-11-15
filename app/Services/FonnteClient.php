@@ -32,7 +32,11 @@ class FonnteClient
      * @param string $message Text content with placeholders already replaced.
      * @return array{success:bool, status:int|null, body:mixed, error:string|null}
      */
-    public function send(string $phone, string $message): array
+    /**
+     * Send a WhatsApp message using Fonnte API.
+     * Optional $options map follows Fonnte docs: countryCode, delay, schedule, typing, template, url, etc.
+     */
+    public function send(string $phone, string $message, array $options = []): array
     {
         if (! $this->enabled()) {
             return ['success' => false, 'status' => null, 'body' => null, 'error' => 'Fonnte disabled'];
@@ -53,21 +57,22 @@ class FonnteClient
                 ->post($this->baseUrl . '/send', [
                     'target' => $normalized,
                     'message' => $message,
+                    ...$this->filterAllowedOptions($options),
                 ]);
 
             $ok = $response->successful();
             if (! $ok) {
                 Log::warning('Fonnte send failed', [
                     'status' => $response->status(),
-                    'body' => $response->json(),
+                    'body' => $this->safeJson($response),
                 ]);
             }
 
             return [
                 'success' => $ok,
                 'status' => $response->status(),
-                'body' => $response->json(),
-                'error' => $ok ? null : 'HTTP ' . $response->status(),
+                'body' => $this->safeJson($response),
+                'error' => $ok ? null : ($this->safeJson($response)['detail'] ?? ('HTTP ' . $response->status())),
             ];
         } catch (\Throwable $e) {
             Log::error('Fonnte exception', ['msg' => $e->getMessage()]);
@@ -77,6 +82,90 @@ class FonnteClient
                 'body' => null,
                 'error' => $e->getMessage(),
             ];
+        }
+    }
+
+    /**
+     * Send to multiple recipients. Fonnte supports comma-separated targets.
+     * @param array<int,string> $phones
+     */
+    public function sendToMany(array $phones, string $message, array $options = []): array
+    {
+        if (! $this->enabled()) {
+            return ['success' => false, 'status' => null, 'body' => null, 'error' => 'Fonnte disabled'];
+        }
+
+        $normalized = collect($phones)
+            ->map(fn (string $p) => preg_replace('/[^0-9]/', '', $p) ?? '')
+            ->filter()
+            ->map(function (string $n) {
+                return str_starts_with($n, '0') ? ('62' . substr($n, 1)) : $n;
+            })
+            ->implode(',');
+
+        return $this->sendRaw($normalized, $message, $options);
+    }
+
+    /**
+     * Lower-level sender when target string already normalized and comma-separated.
+     */
+    protected function sendRaw(string $targets, string $message, array $options = []): array
+    {
+        try {
+            $response = Http::withHeaders([
+                'Authorization' => $this->token,
+            ])
+                ->timeout($this->timeout)
+                ->asForm()
+                ->post($this->baseUrl . '/send', [
+                    'target' => $targets,
+                    'message' => $message,
+                    ...$this->filterAllowedOptions($options),
+                ]);
+
+            $ok = $response->successful();
+            return [
+                'success' => $ok,
+                'status' => $response->status(),
+                'body' => $this->safeJson($response),
+                'error' => $ok ? null : ($this->safeJson($response)['detail'] ?? ('HTTP ' . $response->status())),
+            ];
+        } catch (\Throwable $e) {
+            Log::error('Fonnte exception', ['msg' => $e->getMessage()]);
+            return [
+                'success' => false,
+                'status' => null,
+                'body' => null,
+                'error' => $e->getMessage(),
+            ];
+        }
+    }
+
+    /**
+     * Allowlist of options supported by Fonnte text API (non-file):
+     * countryCode, delay, schedule, typing, template, url, isGroup
+     */
+    protected function filterAllowedOptions(array $options): array
+    {
+        $allowed = [
+            'countryCode', 'delay', 'schedule', 'typing', 'template', 'url', 'isGroup',
+        ];
+
+        return collect($options)
+            ->only($allowed)
+            ->filter(fn ($v) => $v !== null && $v !== '')
+            ->all();
+    }
+
+    /**
+     * Safely decode JSON; fall back to raw string on failure.
+     */
+    protected function safeJson(\Illuminate\Http\Client\Response $response): array
+    {
+        try {
+            return $response->json() ?? [];
+        } catch (\Throwable $e) {
+            return ['raw' => $response->body()];
         }
     }
 
