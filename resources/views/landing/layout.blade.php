@@ -53,6 +53,9 @@
     <!-- Footer -->
     @include('landing.partials.footer')
 
+    <!-- Chatbot Widget -->
+    @include('landing.partials.chatbot')
+
     @stack('scripts')
 </body>
 </html>
