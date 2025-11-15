@@ -96,9 +96,12 @@
     <!-- Footer -->
     @include('landing.partials.footer')
 
-    <!-- Chatbot Widget -->
-    @php($whatsappNumber = \App\Models\Setting::get('school_whatsapp', '6281234567890'))
-    @include('landing.partials.chatbot', ['whatsappNumber' => $whatsappNumber])
+    <!-- Chatbot Widget (conditional) -->
+    @php($chatbotEnabled = \App\Models\Setting::get('gemini_enabled', 'false') === 'true')
+    @if($chatbotEnabled)
+        @php($whatsappNumber = \App\Models\Setting::get('school_whatsapp', '6281234567890'))
+        @include('landing.partials.chatbot', ['whatsappNumber' => $whatsappNumber])
+    @endif
 
     @stack('scripts')
 </body>

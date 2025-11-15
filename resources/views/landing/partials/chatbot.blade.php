@@ -168,6 +168,13 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Safety guard: hide widget if chatbot disabled (in case of caching)
+    const enabledFlag = '{{ \App\Models\Setting::get('gemini_enabled', 'false') }}' === 'true';
+    if (!enabledFlag) {
+        const container = document.getElementById('chatbot-container');
+        if (container) container.remove();
+        return; // stop initialization
+    }
     const toggleBtn = document.getElementById('chatbot-toggle');
     const closeBtn = document.getElementById('chatbot-close');
     const widget = document.getElementById('chatbot-widget');
