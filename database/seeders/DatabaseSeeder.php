@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
            ApplicantSeeder::class,
            AnnouncementSeeder::class,
             SettingSeeder::class,
+            MarqueeSeeder::class,
        ]);
     }
 }

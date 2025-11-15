@@ -181,3 +181,167 @@ Berikut adalah tabel lengkap dan *robust* yang merinci perbedaan arsitektur dan 
 | **Mode Paginasi** | Paginasi standar. | **Dukungan Paginasi Lanjut:** Selain paginasi standar, mendukung `paginationMode(PaginationMode::Simple)` atau `paginationMode(PaginationMode::Cursor)`. | Memberi fleksibilitas untuk mengoptimalkan pengalaman pengguna tergantung pada ukuran dan jenis data yang ditampilkan. |
 | **Inline Label (Infolist)** | Label entry berada di atas konten. | **`inlineLabel()`:** Label dapat ditampilkan sejajar dengan konten entri, yang sangat berguna untuk menghemat ruang vertikal dalam tampilan rincian (View Page). | Menyediakan tata letak rincian siswa yang lebih ringkas dan profesional. |
 | **Code Quality** | File Resource cenderung panjang (monolitik). | **Schema and Table Classes:** Filament merekomendasikan pemisahan definisi form dan tabel ke dalam kelas terpisah untuk menjaga kebersihan dan keterbacaan kode. | Memastikan proyek PPDB Anda mudah di-*debug* dan dikembangkan oleh tim. |
+
+
+Selamat, rekan programmer! Membangun *Resource* di Filament adalah langkah paling dasar dan fundamental dalam proyek PPDB Anda, karena *Resource* adalah tulang punggung antarmuka CRUD (*Create, Read, Update, Delete*) untuk setiap model Eloquent Anda.
+
+Filament 4 (v4.x, termasuk v4.1) sepenuhnya mengadopsi prinsip **Server-Driven UI (SDUI)**, di mana semua antarmuka didefinisikan secara murni menggunakan objek konfigurasi PHP melalui paket **`filament/schemas`**.
+
+Berikut adalah panduan lengkap dan *robust* untuk membuat Resource di Filament 4:
+
+---
+
+## 1. Proses Generasi Resource
+
+Anda memulai dengan menjalankan perintah Artisan untuk membuat Resource baru. Secara *default*, Resource akan membuat tiga halaman: List (tabel berpaginasi), Create (formulir untuk membuat data baru), dan Edit (formulir untuk memodifikasi data).
+
+### Perintah Dasar:
+
+```bash
+php artisan make:filament-resource Student --generate
+```
+
+*   `Student`: Nama model Eloquent Anda (misalnya, `App\Models\Student`).
+*   `--generate`: (Opsional, sangat direkomendasikan) akan mencoba membuat *form* dan *table* secara otomatis berdasarkan kolom database model Anda.
+
+### Opsi Tambahan Penting:
+
+*   `--view`: Menambahkan halaman **View** yang merupakan tampilan data *read-only*.
+*   `--simple`: Membuat Resource sederhana dengan hanya halaman *Manage* (List dengan modal Create/Edit di dalamnya), tanpa halaman Edit dan View terpisah.
+*   `--soft-deletes`: Menambahkan fungsionalitas untuk *soft-delete*, *restore*, *force-delete*, dan filter data yang telah di-*trash*.
+
+Setelah dijalankan, Filament akan membuat file Resource (misalnya `app/Filament/Resources/StudentResource.php`) dan Page di direktori `Pages`.
+
+## 2. Struktur Kelas Resource
+
+Setiap kelas Resource harus mendefinisikan setidaknya tiga hal: model yang dikelola, formulir, dan tabel data.
+
+### A. Konfigurasi Awal
+
+```php
+// app/Filament/Resources/StudentResource.php
+use Filament\Schemas\Schema; // Wajib di Filament 4!
+use Filament\Tables\Table;
+
+protected static ?string $model = \App\Models\Student::class;
+
+// Atribut penting untuk Global Search, diperlukan untuk mengidentifikasi record.
+protected static ?string $recordTitleAttribute = 'name';
+```
+
+### B. Mendefinisikan Form (Halaman Create dan Edit)
+
+Metode `form()` mendefinisikan skema input yang akan digunakan di halaman *Create* dan *Edit* Resource.
+
+```php
+public static function form(Schema $schema): Schema
+{
+    return $schema
+        ->components([
+            // Input Fields berada di namespace Forms\Components
+            Forms\Components\TextInput::make('name')
+                ->required()
+                ->maxLength(255),
+            
+            // Komponen Layout (Seperti Section) berada di Schemas\Components di V4
+            Schemas\Components\Section::make('Data Pendaftaran') // Contoh penggunaan Section
+                ->schema([
+                    Forms\Components\Select::make('jalur_pendaftaran')
+                        ->options([
+                            'afirmasi' => 'Afirmasi',
+                            'prestasi' => 'Prestasi',
+                        ])
+                        ->required(),
+                    
+                    Forms\Components\FileUpload::make('kartu_keluarga')
+                        ->acceptedFileTypes(['application/pdf'])
+                        ->maxSize(2048) // 2MB
+                        ->disk('public') // Dapat dikonfigurasi dinamis
+                        ->required(),
+                ])
+        ]);
+}
+```
+
+### C. Mendefinisikan Tabel (Halaman List)
+
+Metode `table()` mendefinisikan kolom, filter, dan aksi yang tersedia di halaman *List Records*.
+
+```php
+public static function table(Table $table): Table
+{
+    return $table
+        ->columns([
+            Tables\Columns\TextColumn::make('name')
+                ->sortable()
+                ->searchable(), // Kolom Teks
+            Tables\Columns\TextColumn::make('jalur_pendaftaran')
+                ->formatStateUsing(fn (string $state) => Str::headline($state)),
+        ])
+        ->filters([
+            // Filter
+        ])
+        ->actions([
+            // Aksi per baris
+            Tables\Actions\EditAction::make(),
+            Tables\Actions\DeleteAction::make(),
+        ]);
+}
+```
+
+### D. Mengelola Hubungan (Relation Managers)
+
+Jika model Anda memiliki relasi (misalnya, `Student` memiliki banyak `Documents`), Anda mendefinisikan pengelola relasi di `getRelations()`:
+
+```php
+// Dalam StudentResource.php
+public static function getRelations(): array
+{
+    return [
+        RelationManagers\DocumentsRelationManager::class,
+    ];
+}
+```
+
+## 3. Fitur Arsitektur Kunci Filament 4
+
+Saat bekerja di Filament 4, ada beberapa konsep yang harus Anda pegang teguh:
+
+### A. Sentralisasi Skema (`Filament\Schemas`)
+
+Filament 4 menggunakan `filament/schemas` sebagai fondasi universal. Ini berarti komponen *layout* yang sebelumnya mungkin berada di *namespace* `Forms` (seperti yang ditunjukkan oleh *error* Anda sebelumnya) kini berada di bawah `Schemas` atau di-ekspor ulang.
+
+Contoh penting:
+
+*   Komponen *Input* (Field): `Filament\Forms\Components\TextInput`
+*   Komponen *Layout* (Structural): `Filament\Schemas\Components\Section`, `Filament\Schemas\Components\Grid`, `Filament\Schemas\Components\Flex`
+*   Komponen *Actions*: `Filament\Actions\Action`
+
+### B. Modularitas (Code Quality Tips)
+
+Untuk menjaga kualitas kode, terutama dalam proyek PPDB yang kompleks, disarankan untuk memisahkan definisi UI menjadi kelas-kelas skema terpisah.
+
+*   Alih-alih menempatkan semua logika di `form()`, Anda dapat membuat file terpisah (misalnya `app/Filament/Resources/Student/Schemas/StudentForm.php`) dan memanggilnya:
+
+```php
+// Dalam Resource:
+public static function form(Schema $schema): Schema
+{
+    return StudentForm::configure($schema);
+}
+```
+
+*   Anda juga dapat membuat komponen input yang dapat digunakan kembali, misalnya `CustomerNameInput`.
+
+### C. Dinamika Tingkat Tinggi (Utility Injection)
+
+Salah satu kekuatan terbesar Filament 4 adalah kemampuannya menyuntikkan utilitas ke dalam *closure* kustomisasi hampir di mana saja (`options()`, `hidden()`, `url()`, dll.).
+
+| Utility | Tipe | Deskripsi |
+| :--- | :--- | :--- |
+| **`$get`** | `Filament\Schemas\Components\Utilities\Get` | Fungsi untuk mengambil nilai dari data *form* saat ini secara reaktif (tanpa memicu validasi). |
+| **`$record`** | `?Illuminate\Database\Eloquent\Model` | *Record* Eloquent saat ini (tersedia di halaman Edit/View). |
+| **`$livewire`** | `Livewire\Component` | *Instance* Livewire komponen saat ini. |
+| **`$operation`** | `string` | Operasi saat ini (`create`, `edit`, atau `view`). Berguna untuk membuat field kondisional, misalnya menyembunyikan field `password` di halaman *Edit*.
+
+Dengan memahami fondasi Filament 4, Anda dapat merancang antarmuka PPDB yang sangat dinamis dan terstruktur.

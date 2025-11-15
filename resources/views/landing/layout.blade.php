@@ -36,6 +36,28 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        /* Marquee Animation */
+        .marquee-container {
+            width: 100%;
+            overflow: hidden;
+        }
+        .marquee-content {
+            display: inline-block;
+            white-space: nowrap;
+            animation: marquee 30s linear infinite;
+        }
+        @keyframes marquee {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        .marquee-content:hover {
+            animation-play-state: paused;
+        }
     </style>
 
     @stack('styles')
@@ -44,6 +66,26 @@
 
     <!-- Navbar -->
     @include('landing.partials.navbar')
+
+    <!-- Marquee Banner -->
+    @php
+        $marquees = \App\Models\Marquee::active()->ordered()->get();
+    @endphp
+
+    @if($marquees->count() > 0)
+    <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 overflow-hidden">
+        <div class="marquee-container">
+            <div class="marquee-content">
+                @foreach($marquees as $marquee)
+                    <span class="inline-block px-8">
+                        <i class="fas fa-bullhorn mr-2"></i>
+                        {{ $marquee->text }}
+                    </span>
+                @endforeach
+            </div>
+        </div>
+    </div>
+    @endif
 
     <!-- Main Content -->
     <main>

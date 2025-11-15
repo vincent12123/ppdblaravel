@@ -4,7 +4,48 @@ Sistem manajemen Penerimaan Peserta Didik Baru berbasis web yang dibangun dengan
 
 ## 📋 Tentang Proyek
 
-Aplikasi PPDB ini dirancang untuk memudahkan proses pendaftaran siswa baru secara online. Sistem ini menyediakan antarmuka yang user-friendly untuk calon siswa dan panel administrasi yang powerful untuk mengelola seluruh proses PPDB.
+Aplikasi PPDB ini dirancang untuk memudahkan proses pendaftaran siswa baru secara online. Sistem ini menyediakan antarmuka yang user-friendly untuk calon siswa dan panel administrasi yang pow### Roadmap WA
+- Kirim saat registrasi (belum diaktifkan)
+- Log status pengiriman di database
+- Template multiple bahasa
+- Broadcast pengumuman
+
+## 📣 Fitur Marquee / Running Text
+
+Marquee adalah teks berjalan yang ditampilkan di bagian atas landing page untuk menampilkan pengumuman penting, deadline pendaftaran, atau informasi umum.
+
+### Cara Menggunakan
+
+#### Menambah Marquee Baru
+1. Login ke dashboard admin
+2. Navigasi ke menu **Konten** → **Marquee**
+3. Klik tombol **Create**
+4. Isi form:
+   - **Teks Marquee**: Masukkan teks pengumuman (max 500 karakter)
+   - **Aktif**: Toggle ON untuk menampilkan, OFF untuk menyembunyikan
+   - **Urutan**: Angka kecil = tampil lebih awal (0, 1, 2, dst)
+5. Klik **Save**
+
+#### Mengatur Urutan Tampilan
+- Semakin kecil nilai **Urutan**, semakin awal ditampilkan
+- Contoh: Marquee dengan order 0 tampil sebelum order 1
+- Jika order sama, diurutkan berdasarkan waktu dibuat (terbaru dulu)
+
+#### Menonaktifkan Marquee
+1. Edit marquee yang ingin dinonaktifkan
+2. Toggle **Aktif** menjadi OFF
+3. Klik **Save**
+4. Marquee tidak akan ditampilkan di landing page, tapi data tetap tersimpan
+
+### Fitur Teknis
+- **Animasi**: Scrolling horizontal 30 detik per loop
+- **Hover Effect**: Pause saat mouse hover untuk memudahkan pembacaan
+- **Multiple Marquee**: Dapat menampilkan beberapa pesan sekaligus dengan urutan prioritas
+- **Conditional Rendering**: Hanya tampil jika ada marquee aktif
+
+Dokumentasi lengkap tersedia di `docs/MARQUEE_FEATURE.md`.
+
+## 📝 Lisensintuk mengelola seluruh proses PPDB.
 
 ## ✨ Fitur Utama
 
@@ -67,6 +108,12 @@ Aplikasi PPDB ini dirancang untuk memudahkan proses pendaftaran siswa baru secar
   - Rich text editor untuk konten
   - Status published/draft
   - Tampilan otomatis di halaman publik
+
+- **Marquee / Running Text**
+  - Teks berjalan di landing page
+  - Kelola teks, status aktif/nonaktif, dan urutan tampilan
+  - Animasi scrolling smooth dengan hover pause
+  - Multiple marquee dengan prioritas
 
 - **Role & Permission**
   - Admin: Akses penuh ke semua fitur
@@ -265,7 +312,8 @@ ppdb/
 
 - [ ] Notifikasi Email/WhatsApp otomatis
 - [x] Export data pendaftar (Excel) ✅
-- [x] Integrasi WhatsApp Fonnte (Beta)
+- [x] Integrasi WhatsApp Fonnte (Beta) ✅
+- [x] Marquee / Running Text di Landing Page ✅
 - [ ] Import data pendaftar dari Excel
 - [ ] Export PDF dengan template custom
 - [ ] Sistem pembayaran online
