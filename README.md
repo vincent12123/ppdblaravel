@@ -45,6 +45,52 @@ Marquee adalah teks berjalan yang ditampilkan di bagian atas landing page untuk 
 
 Dokumentasi lengkap tersedia di `docs/MARQUEE_FEATURE.md`.
 
+## ⚙️ Pengaturan Sekolah
+
+Kelola informasi identitas sekolah secara terpusat dari dashboard admin. Data yang diatur akan otomatis ditampilkan di footer website dan bagian lainnya.
+
+### Cara Menggunakan
+
+1. Login ke dashboard admin
+2. Navigasi ke menu **Pengaturan** → **Pengaturan Sekolah**
+3. Edit informasi sekolah:
+   - **Informasi Umum**: Nama sekolah, email, telepon, website, deskripsi
+   - **Alamat**: Alamat lengkap, kota, provinsi, kode pos
+   - **Media Sosial**: Link Facebook, Instagram, YouTube, WhatsApp
+4. Klik **Simpan Pengaturan**
+5. Data akan langsung muncul di footer website
+
+### Field yang Tersedia
+
+**Informasi Umum**:
+- Nama Sekolah (required)
+- Email Sekolah (required, format email)
+- Nomor Telepon (required)
+- Website (format URL)
+- Deskripsi Sekolah (max 500 karakter)
+
+**Alamat**:
+- Alamat Lengkap (required)
+- Kota/Kabupaten (required)
+- Provinsi (required)
+- Kode Pos
+
+**Media Sosial** (semua opsional):
+- Facebook (format URL)
+- Instagram (format URL)
+- YouTube (format URL)
+- WhatsApp (format: 628xxx tanpa +)
+
+### Fitur
+- ✅ Form dengan validasi lengkap
+- ✅ Data tersimpan di database (tabel `settings`)
+- ✅ Cache 5 menit untuk performa
+- ✅ Tampilan otomatis di footer
+- ✅ Icon media sosial hanya tampil jika diisi
+- ✅ Success notification setelah save
+
+Dokumentasi lengkap tersedia di `docs/SCHOOL_SETTINGS_FEATURE.md`.
+
 ## 📝 Lisensintuk mengelola seluruh proses PPDB.
 
 ## ✨ Fitur Utama
@@ -114,6 +160,13 @@ Dokumentasi lengkap tersedia di `docs/MARQUEE_FEATURE.md`.
   - Kelola teks, status aktif/nonaktif, dan urutan tampilan
   - Animasi scrolling smooth dengan hover pause
   - Multiple marquee dengan prioritas
+
+- **Pengaturan Sekolah**
+  - Kelola informasi sekolah secara terpusat
+  - Info umum: nama, email, telepon, website, deskripsi
+  - Alamat lengkap: alamat, kota, provinsi, kode pos
+  - Media sosial: Facebook, Instagram, YouTube, WhatsApp
+  - Data otomatis tampil di footer website
 
 - **Role & Permission**
   - Admin: Akses penuh ke semua fitur
@@ -314,6 +367,7 @@ ppdb/
 - [x] Export data pendaftar (Excel) ✅
 - [x] Integrasi WhatsApp Fonnte (Beta) ✅
 - [x] Marquee / Running Text di Landing Page ✅
+- [x] Pengaturan Sekolah (School Settings) ✅
 - [ ] Import data pendaftar dari Excel
 - [ ] Export PDF dengan template custom
 - [ ] Sistem pembayaran online
