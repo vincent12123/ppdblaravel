@@ -17,9 +17,42 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
     <style>
-        body {
+        html, body {
             font-family: 'Inter', sans-serif;
+            height: 100%;
+            margin: 0;
+            padding: 0;
         }
+        
+        body {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding-bottom: 0;
+            position: relative;
+        }
+        
+        main {
+            flex: 1 0 auto;
+        }
+        
+        footer {
+            flex-shrink: 0;
+            position: relative;
+            z-index: 10;
+        }
+        
+        /* Hide browser extension elements that interfere with layout */
+        #crxjs-app,
+        [id^="crx-"] {
+            display: none !important;
+            visibility: hidden !important;
+            position: absolute !important;
+            width: 0 !important;
+            height: 0 !important;
+            overflow: hidden !important;
+        }
+        
         .hero-gradient {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
         }
@@ -42,7 +75,13 @@
         .marquee-container {
             width: 100%;
             overflow: hidden;
+            position: relative;
         }
+        
+        .marquee-wrapper {
+            position: relative;
+        }
+        
         .marquee-content {
             display: inline-block;
             white-space: nowrap;
@@ -65,28 +104,31 @@
 </head>
 <body class="bg-gray-50">
 
-    <!-- Navbar -->
-    @include('landing.partials.navbar')
+    <!-- Sticky Header (Navbar + Marquee) -->
+    <div class="sticky top-0 z-50">
+        <!-- Navbar -->
+        @include('landing.partials.navbar')
 
-    <!-- Marquee Banner -->
-    @php
-        $marquees = \App\Models\Marquee::active()->ordered()->get();
-    @endphp
+        <!-- Marquee Banner -->
+        @php
+            $marquees = \App\Models\Marquee::active()->ordered()->get();
+        @endphp
 
-    @if($marquees->count() > 0)
-    <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 overflow-hidden">
-        <div class="marquee-container">
-            <div class="marquee-content">
-                @foreach($marquees as $marquee)
-                    <span class="inline-block px-8">
-                        <i class="fas fa-bullhorn mr-2"></i>
-                        {{ $marquee->text }}
-                    </span>
-                @endforeach
+        @if($marquees->count() > 0)
+        <div class="marquee-wrapper bg-gradient-to-r from-blue-600 to-purple-600 text-white py-2 overflow-hidden">
+            <div class="marquee-container">
+                <div class="marquee-content">
+                    @foreach($marquees as $marquee)
+                        <span class="inline-block px-8">
+                            <i class="fas fa-bullhorn mr-2"></i>
+                            {{ $marquee->text }}
+                        </span>
+                    @endforeach
+                </div>
             </div>
         </div>
+        @endif
     </div>
-    @endif
 
     <!-- Main Content -->
     <main>

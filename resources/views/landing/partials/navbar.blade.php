@@ -1,4 +1,4 @@
-<nav class="glassmorphism-nav sticky top-0 z-50">
+<nav class="glassmorphism-nav relative">
     <div class="container mx-auto px-4 py-4">
         <div class="flex justify-between items-center">
             <!-- Logo -->

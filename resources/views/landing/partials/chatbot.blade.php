@@ -1,5 +1,5 @@
 <!-- Floating Chatbot Widget -->
-<div id="chatbot-container" class="fixed bottom-6 right-6 z-50">
+<div id="chatbot-container" class="fixed bottom-6 right-6 z-40">
     <!-- Chat Button -->
     <button id="chatbot-toggle" class="bg-gradient-to-r from-green-500 to-green-600 text-white rounded-full w-16 h-16 flex items-center justify-center shadow-2xl hover:shadow-green-500/50 hover:scale-110 transition-all duration-300 relative group">
         <i class="fas fa-comment-dots text-2xl" id="chat-icon"></i>
