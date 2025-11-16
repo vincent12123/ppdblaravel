@@ -82,7 +82,13 @@
                     </div>
                     <div>
                         <p class="text-gray-600 text-sm mb-1">No. HP</p>
-                        <p class="font-semibold text-gray-800">{{ $applicant->phone }}</p>
+                        <p class="font-semibold text-gray-800">
+                            @php
+                                $phone = $applicant->phone;
+                                $masked = str_repeat('x', max(0, strlen($phone) - 3)) . substr($phone, -3);
+                                echo substr($phone, 0, 1) . $masked;
+                            @endphp
+                        </p>
                     </div>
                     <div>
                         <p class="text-gray-600 text-sm mb-1">Asal Sekolah</p>
@@ -134,70 +140,6 @@
                 </div>
             </div>
 
-            <!-- Documents Status -->
-            <div class="bg-white rounded-xl shadow-lg p-8 mb-6">
-                <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
-                    <i class="fas fa-file-alt text-indigo-600 mr-3"></i>
-                    Status Dokumen
-                </h3>
-
-                @php
-                    $documentTypes = [
-                        'foto' => ['name' => 'Pas Foto 3x4', 'icon' => 'fa-image'],
-                        'ijazah' => ['name' => 'Ijazah/STTB SMP', 'icon' => 'fa-certificate'],
-                        'kartu_keluarga' => ['name' => 'Kartu Keluarga', 'icon' => 'fa-users'],
-                        'akta_kelahiran' => ['name' => 'Akta Kelahiran', 'icon' => 'fa-file-alt'],
-                        'rapor' => ['name' => 'Rapor Semester 1-5', 'icon' => 'fa-book']
-                    ];
-                @endphp
-
-                <div class="space-y-3">
-                    @foreach($documentTypes as $type => $info)
-                        @php
-                            $document = $applicant->documents->firstWhere('type', $type);
-                        @endphp
-                        <div class="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                            <div class="flex items-center">
-                                <i class="fas {{ $info['icon'] }} text-gray-400 mr-3"></i>
-                                <span class="text-gray-800">{{ $info['name'] }}</span>
-                            </div>
-                            @if($document)
-                                @if($document->is_verified)
-                                <span class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-semibold">
-                                    <i class="fas fa-check-circle mr-1"></i>Terverifikasi
-                                </span>
-                                @else
-                                <span class="px-3 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm font-semibold">
-                                    <i class="fas fa-clock mr-1"></i>Menunggu Verifikasi
-                                </span>
-                                @endif
-                            @else
-                            <span class="px-3 py-1 bg-gray-100 text-gray-600 rounded-full text-sm">
-                                <i class="fas fa-minus-circle mr-1"></i>Tidak Ada
-                            </span>
-                            @endif
-                        </div>
-                    @endforeach
-                </div>
-
-                @php
-                    $totalDocs = $applicant->documents->count();
-                    $verifiedDocs = $applicant->documents->where('is_verified', true)->count();
-                @endphp
-
-                @if($totalDocs > 0)
-                <div class="mt-6 p-4 bg-gray-50 rounded-lg">
-                    <div class="flex items-center justify-between mb-2">
-                        <span class="text-gray-700 font-semibold">Progress Verifikasi</span>
-                        <span class="text-gray-800 font-bold">{{ $verifiedDocs }}/{{ $totalDocs }}</span>
-                    </div>
-                    <div class="w-full bg-gray-200 rounded-full h-3">
-                        <div class="bg-indigo-600 h-3 rounded-full transition-all" style="width: {{ $totalDocs > 0 ? ($verifiedDocs/$totalDocs*100) : 0 }}%"></div>
-                    </div>
-                </div>
-                @endif
-            </div>
-
             <!-- Next Steps -->
             <div class="bg-white rounded-xl shadow-lg p-8 mb-6">
                 <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center">
@@ -226,7 +168,7 @@
                 <div class="bg-green-50 border-l-4 border-green-500 p-4">
                     <ul class="list-disc list-inside space-y-2 text-gray-700">
                         <li>Selamat! Pendaftaran Anda telah <strong>diterima</strong></li>
-                        <li>Silakan cek email untuk informasi daftar ulang</li>
+                        <li>Silakan cek WhatsApp Anda untuk informasi daftar ulang</li>
                         <li>Siapkan dokumen asli untuk verifikasi</li>
                         <li>Lakukan daftar ulang sesuai jadwal yang ditentukan</li>
                     </ul>
