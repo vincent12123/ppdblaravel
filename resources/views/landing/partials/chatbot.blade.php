@@ -187,6 +187,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const chatAiUrl = "{{ route('chat.ai') }}";
     const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
+    // State for status check flow
+    let waitingForRegistrationNumber = false;
+
     // Toggle chatbot
     function toggleChatbot() {
         widget.classList.toggle('hidden');
@@ -290,6 +293,13 @@ document.addEventListener('DOMContentLoaded', function() {
         addMessage(userMessage, true);
         chatInput.value = '';
 
+        // Check if waiting for registration number
+        if (waitingForRegistrationNumber) {
+            waitingForRegistrationNumber = false;
+            await checkRegistrationStatus(userMessage);
+            return;
+        }
+
         // Show typing indicator
         showTypingIndicator();
         const botResponse = await getAiResponse(userMessage);
@@ -336,16 +346,9 @@ document.addEventListener('DOMContentLoaded', function() {
             ⏰ <em>Jangan sampai terlewat!</em>`,
 
         "Cek status pendaftaran": `🔍 <strong>Cara Cek Status:</strong><br><br>
-            1. Klik menu <strong>"Cek Status"</strong> di halaman utama<br>
-            2. Masukkan Nomor Registrasi Anda<br>
-            3. Klik tombol <strong>"Cek Status"</strong><br>
-            4. Sistem akan menampilkan status terkini<br><br>
-            Status yang tersedia:<br>
-            • ⏳ Menunggu Verifikasi<br>
-            • 👀 Sedang Ditinjau<br>
-            • ✅ Diterima<br>
-            • ❌ Ditolak<br><br>
-            📧 <em>Anda juga akan menerima notifikasi via email</em>`,
+            Saya akan membantu Anda mengecek status pendaftaran.<br><br>
+            Silakan masukkan <strong>Nomor Registrasi</strong> Anda di kolom chat di bawah ini.<br><br>
+            Contoh format: <code>PPDB2025001</code>`,
 
         "Kontak admin": `📞 <strong>Hubungi Kami:</strong><br><br>
             <strong>WhatsApp:</strong><br>
@@ -357,6 +360,83 @@ document.addEventListener('DOMContentLoaded', function() {
             <strong>Alamat:</strong> {{ \App\Models\Setting::get('school_address', 'Jl. Pendidikan No. 123') }}<br><br>
             🕐 <strong>Jam Operasional:</strong> Senin-Jumat, 08:00-16:00 WIB`
     };
+
+    // Function to check registration status
+    async function checkRegistrationStatus(registrationNumber) {
+        showTypingIndicator();
+
+        try {
+            const response = await fetch("{{ route('registration.checkStatusApi') }}", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': csrfToken,
+                    'Accept': 'application/json',
+                },
+                body: JSON.stringify({ registration_number: registrationNumber })
+            });
+
+            const data = await response.json();
+            removeTypingIndicator();
+
+            // Reset placeholder
+            chatInput.placeholder = "Ketik pesan Anda...";
+
+            if (!response.ok || data.error) {
+                addMessage(`❌ <strong>Data Tidak Ditemukan</strong><br><br>
+                    Nomor registrasi <code>${escapeHtml(registrationNumber)}</code> tidak ditemukan dalam sistem.<br><br>
+                    Pastikan Anda memasukkan nomor yang benar.<br><br>
+                    💡 Atau <a href="{{ route('registration.checkStatus') }}" class="text-blue-600 hover:underline">klik di sini</a> untuk cek status manual.`, false);
+                return;
+            }
+
+            // Format status message
+            const statusIcons = {
+                'draft': '📄',
+                'submitted': '⏳',
+                'reviewed': '👀',
+                'accepted': '✅',
+                'rejected': '❌',
+                'registered': '📋'
+            };
+
+            const statusText = {
+                'draft': 'Draft',
+                'submitted': 'Menunggu Verifikasi',
+                'reviewed': 'Sedang Ditinjau',
+                'accepted': 'Diterima',
+                'rejected': 'Ditolak',
+                'registered': 'Terdaftar'
+            };
+
+            let statusMessage = `${statusIcons[data.status] || '📋'} <strong>Status Pendaftaran</strong><br><br>
+                <strong>Nomor Registrasi:</strong> ${data.registration_number}<br>
+                <strong>Nama:</strong> ${data.name}<br>
+                <strong>Status:</strong> <span style="font-weight: bold; color: ${data.status === 'accepted' ? '#10b981' : data.status === 'rejected' ? '#ef4444' : '#f59e0b'};">${statusText[data.status]}</span><br><br>`;
+
+            if (data.status === 'accepted' && data.assigned_major) {
+                statusMessage += `🎉 <strong>Selamat!</strong><br>Anda diterima di jurusan: <strong>${data.assigned_major}</strong><br><br>`;
+            }
+
+            if (data.status === 'submitted' || data.status === 'registered') {
+                statusMessage += `⏳ Dokumen Anda sedang dalam proses verifikasi (2-3 hari kerja).<br><br>`;
+            } else if (data.status === 'reviewed') {
+                statusMessage += `👀 Pendaftaran Anda sedang ditinjau oleh tim panitia.<br><br>`;
+            } else if (data.status === 'accepted') {
+                statusMessage += `📧 Silakan cek email untuk informasi daftar ulang.<br><br>`;
+            }
+
+            statusMessage += `🔗 <a href="{{ route('registration.checkStatus') }}" class="text-blue-600 hover:underline">Lihat detail lengkap</a>`;
+
+            addMessage(statusMessage, false);
+
+        } catch (error) {
+            removeTypingIndicator();
+            chatInput.placeholder = "Ketik pesan Anda...";
+            addMessage(`❌ <strong>Terjadi Kesalahan</strong><br><br>
+                Tidak dapat terhubung ke server. Silakan coba lagi atau gunakan halaman <a href="{{ route('registration.checkStatus') }}" class="text-blue-600 hover:underline">Cek Status manual</a>.`, false);
+        }
+    }
 
     quickReplyBtns.forEach(btn => {
         btn.addEventListener('click', async function() {
@@ -370,6 +450,13 @@ document.addEventListener('DOMContentLoaded', function() {
                 await new Promise(resolve => setTimeout(resolve, 800));
                 removeTypingIndicator();
                 addMessage(localFAQ[question], false);
+
+                // If "Cek status" button clicked, enable status check mode
+                if (question === "Cek status pendaftaran") {
+                    waitingForRegistrationNumber = true;
+                    chatInput.placeholder = "Masukkan nomor registrasi Anda...";
+                    chatInput.focus();
+                }
             } else {
                 // Fallback to AI if not in FAQ
                 showTypingIndicator();

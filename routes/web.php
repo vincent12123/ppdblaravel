@@ -24,6 +24,7 @@ Route::get('/pendaftaran/sukses/{registration_number}', [RegistrationController:
 // Check Status Routes
 Route::get('/cek-status', [RegistrationController::class, 'checkStatus'])->name('registration.checkStatus');
 Route::post('/cek-status', [RegistrationController::class, 'showStatus'])->name('registration.showStatus');
+Route::post('/api/cek-status', [RegistrationController::class, 'checkStatusApi'])->name('registration.checkStatusApi');
 
 // Document Download Route (untuk admin)
 Route::middleware(['auth'])->group(function () {

@@ -130,4 +130,31 @@ class RegistrationController extends Controller
 
         return view('registration.status', compact('applicant'));
     }
+
+    public function checkStatusApi(Request $request)
+    {
+        $request->validate([
+            'registration_number' => 'required|string',
+        ]);
+
+        $applicant = Applicant::where('registration_number', $request->registration_number)
+            ->with(['majorChoice1', 'majorChoice2', 'majorChoice3', 'assignedMajor'])
+            ->first();
+
+        if (!$applicant) {
+            return response()->json([
+                'error' => true,
+                'message' => 'Nomor registrasi tidak ditemukan.'
+            ], 404);
+        }
+
+        return response()->json([
+            'error' => false,
+            'registration_number' => $applicant->registration_number,
+            'name' => $applicant->name,
+            'status' => $applicant->status,
+            'assigned_major' => $applicant->assignedMajor ? $applicant->assignedMajor->name : null,
+            'registered_at' => $applicant->registered_at->format('d F Y, H:i'),
+        ]);
+    }
 }
