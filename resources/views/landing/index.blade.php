@@ -118,7 +118,7 @@
         </div>
 
         <div class="max-w-5xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Step 1 -->
                 <div class="text-center">
                     <div class="w-20 h-20 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white text-3xl font-bold">
@@ -129,18 +129,11 @@
                 </div>
 
                 <!-- Step 2 -->
-                <div class="text-center">
-                    <div class="w-20 h-20 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white text-3xl font-bold">
-                        2
-                    </div>
-                    <h3 class="text-lg font-bold text-gray-800 mb-2">Upload Dokumen</h3>
-                    <p class="text-gray-600 text-sm">Upload ijazah, KK, rapor, dan dokumen lainnya</p>
-                </div>
 
                 <!-- Step 3 -->
                 <div class="text-center">
                     <div class="w-20 h-20 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white text-3xl font-bold">
-                        3
+                        2
                     </div>
                     <h3 class="text-lg font-bold text-gray-800 mb-2">Verifikasi</h3>
                     <p class="text-gray-600 text-sm">Tim kami akan memverifikasi data dan dokumen Anda</p>
@@ -149,7 +142,7 @@
                 <!-- Step 4 -->
                 <div class="text-center">
                     <div class="w-20 h-20 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4 text-white text-3xl font-bold">
-                        4
+                        3
                     </div>
                     <h3 class="text-lg font-bold text-gray-800 mb-2">Pengumuman</h3>
                     <p class="text-gray-600 text-sm">Cek hasil seleksi dan lakukan daftar ulang</p>
@@ -170,7 +163,7 @@
     <div class="container mx-auto px-4">
         <div class="max-w-4xl mx-auto">
             <div class="text-center mb-12">
-                <h2 class="text-4xl font-bold text-gray-800 mb-4">Persyaratan Pendaftaran</h2>
+                <h2 class="text-4xl font-bold text-gray-800 mb-4">Persyaratan Pendaftaran Ulang</h2>
                 <p class="text-xl text-gray-600">Siapkan dokumen-dokumen berikut</p>
             </div>
 
