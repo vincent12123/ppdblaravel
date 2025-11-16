@@ -29,14 +29,14 @@ class ChatbotSettings extends Page
 
     public bool $gemini_enabled = false;
     public ?string $gemini_api_key = null;
-    public ?string $gemini_model = 'gemini-1.5-flash';
+    public ?string $gemini_model = 'gemini-2.0-flash';
     public ?string $gemini_system_instruction = null;
 
     public function mount(): void
     {
         $this->gemini_enabled = Setting::get('gemini_enabled', 'false') === 'true';
         $this->gemini_api_key = Setting::get('gemini_api_key');
-        $this->gemini_model = Setting::get('gemini_model', 'gemini-1.5-flash');
+        $this->gemini_model = Setting::get('gemini_model', 'gemini-2.0-flash');
         $this->gemini_system_instruction = Setting::get('gemini_system_instruction', ChatbotController::defaultSystemInstruction());
     }
 
@@ -51,8 +51,11 @@ class ChatbotSettings extends Page
             Section::make('Model & Perilaku')
                 ->schema([
                     Select::make('gemini_model')->label('Model')->options([
-                        'gemini-1.5-flash' => 'gemini-1.5-flash (cepat)',
-                        'gemini-1.5-pro' => 'gemini-1.5-pro (lebih akurat)',
+                        'gemini-2.0-flash' => 'Gemini 2.0 Flash (Stabil & Cepat)',
+                        'gemini-2.5-flash' => 'Gemini 2.5 Flash (Terbaru & Cepat)',
+                        'gemini-2.0-flash-lite' => 'Gemini 2.0 Flash Lite (Sangat Cepat)',
+                        'gemini-2.5-pro' => 'Gemini 2.5 Pro (Paling Akurat)',
+                        'gemini-flash-latest' => 'Gemini Flash Latest (Auto Update)',
                     ])->searchable(),
                     Textarea::make('gemini_system_instruction')->label('Instruksi Sistem')->rows(6)->helperText('Batasi jawaban sesuai konteks PPDB.'),
                 ])->columns(1),

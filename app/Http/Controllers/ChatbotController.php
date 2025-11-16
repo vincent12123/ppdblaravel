@@ -17,7 +17,7 @@ class ChatbotController extends Controller
         // Check settings
         $enabled = Setting::get('gemini_enabled', 'false') === 'true';
         $apiKey = Setting::get('gemini_api_key');
-        $model = Setting::get('gemini_model', 'gemini-1.5-flash');
+        $model = Setting::get('gemini_model', 'gemini-2.0-flash');
         $system = Setting::get('gemini_system_instruction', self::defaultSystemInstruction());
 
         if (! $enabled || blank($apiKey)) {
@@ -34,17 +34,16 @@ class ChatbotController extends Controller
 
         // Build request payload for Gemini v1beta REST API
         $payload = [
-            'system_instruction' => [
-                'role' => 'system',
-                'parts' => [ ['text' => $system] ],
-            ],
             'contents' => [
                 [
                     'role' => 'user',
                     'parts' => [ ['text' => (string) $validated['message']] ],
                 ],
             ],
-            'generation_config' => [
+            'systemInstruction' => [
+                'parts' => [ ['text' => $system] ],
+            ],
+            'generationConfig' => [
                 'temperature' => 0.4,
                 'topK' => 32,
                 'topP' => 1,
@@ -59,6 +58,13 @@ class ChatbotController extends Controller
                 ->post($endpoint, $payload);
 
             if (! $response->successful()) {
+                // Log error untuk debugging
+                \Log::error('Gemini API Error', [
+                    'status' => $response->status(),
+                    'body' => $response->body(),
+                    'model' => $model,
+                ]);
+
                 return response()->json([
                     'reply' => 'Maaf, asisten AI sedang sibuk. Coba lagi sebentar.',
                 ], 500);
@@ -73,6 +79,10 @@ class ChatbotController extends Controller
                 'reply' => $this->markdownToSimpleHtml((string) $text),
             ]);
         } catch (\Throwable $e) {
+            \Log::error('Gemini API Exception', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
             report($e);
             return response()->json([
                 'reply' => 'Maaf, terjadi gangguan koneksi ke layanan AI.',
