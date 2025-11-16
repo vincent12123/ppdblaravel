@@ -297,16 +297,86 @@ document.addEventListener('DOMContentLoaded', function() {
         addMessage(botResponse, false);
     });
 
-    // Handle quick reply buttons
+    // Handle quick reply buttons with local FAQ
+    const localFAQ = {
+        "Bagaimana cara mendaftar?": `📝 <strong>Cara Mendaftar PPDB Online:</strong><br><br>
+            1. Klik tombol <strong>"Daftar Sekarang"</strong> di halaman utama<br>
+            2. Isi formulir pendaftaran dengan data lengkap<br>
+            3. Pilih maksimal 3 jurusan sesuai minat<br>
+            4. Upload dokumen persyaratan (opsional)<br>
+            5. Submit formulir pendaftaran<br>
+            6. Catat nomor registrasi untuk cek status<br><br>
+            ⚠️ <em>Pastikan data yang diisi benar dan valid!</em>`,
+
+        "Apa saja persyaratan?": `📋 <strong>Persyaratan Pendaftaran:</strong><br><br>
+            <strong>Wajib:</strong><br>
+            • NISN yang valid<br>
+            • Ijazah/STTB SMP atau sederajat<br>
+            • Akta Kelahiran<br>
+            • Kartu Keluarga<br><br>
+            <strong>Opsional (dapat diupload setelah diterima):</strong><br>
+            • Pas foto 3x4<br>
+            • Rapor semester 1-5<br><br>
+            💡 <em>Dokumen opsional dapat dilengkapi saat daftar ulang</em>`,
+
+        "Jurusan apa saja?": `🎓 <strong>Jurusan yang Tersedia:</strong><br><br>
+            Silakan lihat daftar lengkap jurusan di halaman <strong>"Jurusan"</strong> pada menu utama.<br><br>
+            Setiap jurusan memiliki:<br>
+            • Deskripsi lengkap<br>
+            • Prospek karir<br>
+            • Fasilitas pembelajaran<br><br>
+            📌 <em>Anda dapat memilih hingga 3 jurusan saat mendaftar</em>`,
+
+        "Kapan jadwal pendaftaran?": `📅 <strong>Jadwal Pendaftaran:</strong><br><br>
+            Informasi jadwal lengkap dapat dilihat di halaman utama pada bagian <strong>"Timeline PPDB"</strong>.<br><br>
+            Pastikan Anda mendaftar sesuai gelombang yang tersedia:<br>
+            • Gelombang 1: Jalur prestasi<br>
+            • Gelombang 2: Jalur reguler<br>
+            • Gelombang 3: Jalur tambahan<br><br>
+            ⏰ <em>Jangan sampai terlewat!</em>`,
+
+        "Cek status pendaftaran": `🔍 <strong>Cara Cek Status:</strong><br><br>
+            1. Klik menu <strong>"Cek Status"</strong> di halaman utama<br>
+            2. Masukkan Nomor Registrasi Anda<br>
+            3. Klik tombol <strong>"Cek Status"</strong><br>
+            4. Sistem akan menampilkan status terkini<br><br>
+            Status yang tersedia:<br>
+            • ⏳ Menunggu Verifikasi<br>
+            • 👀 Sedang Ditinjau<br>
+            • ✅ Diterima<br>
+            • ❌ Ditolak<br><br>
+            📧 <em>Anda juga akan menerima notifikasi via email</em>`,
+
+        "Kontak admin": `📞 <strong>Hubungi Kami:</strong><br><br>
+            <strong>WhatsApp:</strong><br>
+            <a href="https://wa.me/{{ $whatsappNumber ?? '6281234567890' }}?text=Halo,%20saya%20ingin%20bertanya%20tentang%20PPDB" target="_blank" class="text-green-600 hover:underline">
+                <i class="fab fa-whatsapp"></i> Klik di sini untuk chat
+            </a><br><br>
+            <strong>Email:</strong> {{ \App\Models\Setting::get('school_email', 'ppdb@sekolah.sch.id') }}<br>
+            <strong>Telepon:</strong> {{ \App\Models\Setting::get('school_phone', '021-1234567') }}<br>
+            <strong>Alamat:</strong> {{ \App\Models\Setting::get('school_address', 'Jl. Pendidikan No. 123') }}<br><br>
+            🕐 <strong>Jam Operasional:</strong> Senin-Jumat, 08:00-16:00 WIB`
+    };
+
     quickReplyBtns.forEach(btn => {
         btn.addEventListener('click', async function() {
             const question = this.dataset.question;
             addMessage(question, true);
 
-            showTypingIndicator();
-            const botResponse = await getAiResponse(question);
-            removeTypingIndicator();
-            addMessage(botResponse, false);
+            // Check if question has local answer
+            if (localFAQ[question]) {
+                showTypingIndicator();
+                // Simulate typing delay for better UX
+                await new Promise(resolve => setTimeout(resolve, 800));
+                removeTypingIndicator();
+                addMessage(localFAQ[question], false);
+            } else {
+                // Fallback to AI if not in FAQ
+                showTypingIndicator();
+                const botResponse = await getAiResponse(question);
+                removeTypingIndicator();
+                addMessage(botResponse, false);
+            }
         });
     });
 
