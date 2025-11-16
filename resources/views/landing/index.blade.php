@@ -30,29 +30,20 @@
 <section class="py-16 bg-white">
     <div class="container mx-auto px-4">
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div class="text-center p-6 bg-indigo-50 rounded-xl">
-                <div class="w-16 h-16 bg-indigo-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-calendar-alt text-white text-2xl"></i>
+            @forelse($infoCards as $card)
+            <div class="text-center p-6 bg-{{ $card->bg_color }}-50 rounded-xl hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2">
+                <div class="w-16 h-16 bg-{{ $card->icon_bg_color }}-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                    <i class="fas {{ $card->icon }} text-white text-2xl"></i>
                 </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Jadwal Pendaftaran</h3>
-                <p class="text-gray-600">1 Juni - 31 Juli {{ date('Y') }}</p>
+                <h3 class="text-xl font-bold text-gray-800 mb-2">{{ $card->title }}</h3>
+                <p class="text-gray-600">{{ $card->description }}</p>
             </div>
-
-            <div class="text-center p-6 bg-green-50 rounded-xl">
-                <div class="w-16 h-16 bg-green-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-user-check text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">Gratis Biaya Pendaftaran</h3>
-                <p class="text-gray-600">Tanpa dipungut biaya apapun</p>
+            @empty
+            <div class="col-span-3 text-center py-12 text-gray-500">
+                <i class="fas fa-info-circle text-4xl mb-4"></i>
+                <p>Informasi belum tersedia</p>
             </div>
-
-            <div class="text-center p-6 bg-yellow-50 rounded-xl">
-                <div class="w-16 h-16 bg-yellow-600 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i class="fas fa-laptop text-white text-2xl"></i>
-                </div>
-                <h3 class="text-xl font-bold text-gray-800 mb-2">100% Online</h3>
-                <p class="text-gray-600">Daftar kapan saja, di mana saja</p>
-            </div>
+            @endforelse
         </div>
     </div>
 </section>

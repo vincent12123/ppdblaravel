@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Major;
 use App\Models\Announcement;
+use App\Models\InfoCard;
 use Illuminate\Http\Request;
 
 class LandingController extends Controller
@@ -20,7 +21,10 @@ class LandingController extends Controller
             ->take(3)
             ->get();
 
-        return view('landing.index', compact('majors', 'announcements'));
+        // Ambil info cards yang aktif
+        $infoCards = InfoCard::active()->ordered()->get();
+
+        return view('landing.index', compact('majors', 'announcements', 'infoCards'));
     }
 
     public function majors()
