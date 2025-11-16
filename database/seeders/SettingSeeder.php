@@ -18,14 +18,14 @@ class SettingSeeder extends Seeder
             'fonnte_template_rejected' => config('fonnte.templates.rejected'),
 
             // School Information
-            'school_name' => 'SMK Negeri 1',
-            'school_address' => 'Jl. Pendidikan No. 123',
-            'school_city' => 'Jakarta',
-            'school_province' => 'DKI Jakarta',
-            'school_postal_code' => '12345',
-            'school_phone' => '(021) 1234-5678',
-            'school_email' => 'ppdb@smk.sch.id',
-            'school_website' => 'https://smk.sch.id',
+            'school_name' => 'SMK Karya Bangsa Sintang',
+            'school_address' => 'Jl. Sintang - Pontianak RT.009/RW.003, Desa Balai Agung, Kecamatan Sungai Tebelian, Kabupaten Sintang',
+            'school_city' => 'Sintang',
+            'school_province' => 'Kalimantan Barat',
+            'school_postal_code' => '78655',
+            'school_phone' => '-',
+            'school_email' => 'ppdb@karyabangsa.sch.id',
+            'school_website' => 'https://smk.karyabangsa.sch.id',
             'school_description' => 'Sistem Penerimaan Peserta Didik Baru online yang memudahkan calon siswa untuk mendaftar ke SMK kami.',
 
             // Social Media (empty by default)
