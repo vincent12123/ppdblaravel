@@ -75,7 +75,7 @@
         </div>
 
         <div class="border-t border-gray-800 mt-8 pt-8 text-center text-gray-400 text-sm">
-            <p>&copy; {{ date('Y') }} PPDB {{ $schoolName }}. All rights reserved. Powered by Laravel & Filament.</p>
+            <p>&copy; {{ date('Y') }} PPDB {{ $schoolName }}.</p>
         </div>
     </div>
 </footer>
