@@ -1,10 +1,10 @@
 @php
     use App\Models\Setting;
-    $schoolName = Setting::get('school_name', 'SMK Negeri 1');
+    $schoolName = Setting::get('school_name', 'SMK Karya Bangsa Sintang');
     $schoolDesc = Setting::get('school_description', 'Sistem Penerimaan Peserta Didik Baru online yang memudahkan calon siswa untuk mendaftar ke SMK kami.');
     $schoolPhone = Setting::get('school_phone', '(021) 1234-5678');
-    $schoolEmail = Setting::get('school_email', 'ppdb@smk.sch.id');
-    $schoolAddress = Setting::get('school_address', 'Jl. Pendidikan No. 123');
+    $schoolEmail = Setting::get('school_email', 'ppdb@karyabangsa.sch.id');
+    $schoolAddress = Setting::get('school_address', 'Jl. Sintang - Pontianak RT.009/RW.003, Desa Balai Agung, Kecamatan Sungai Tebelian, Kabupaten Sintang, Kalimantan Barat 78611');
     $schoolFacebook = Setting::get('school_facebook', '');
     $schoolInstagram = Setting::get('school_instagram', '');
     $schoolYoutube = Setting::get('school_youtube', '');
