@@ -3,7 +3,7 @@
     $schoolName = Setting::get('school_name', 'SMK Karya Bangsa Sintang');
     $schoolDesc = Setting::get('school_description', 'Sistem Penerimaan Peserta Didik Baru online yang memudahkan calon siswa untuk mendaftar ke SMK kami.');
     $schoolPhone = Setting::get('school_phone', '(021) 1234-5678');
-    $schoolEmail = Setting::get('school_email', 'ppdb@karyabangsa.sch.id');
+    $schoolEmail = Setting::get('school_email', 'spmb@karyabangsa.sch.id');
     $schoolAddress = Setting::get('school_address', 'Jl. Sintang - Pontianak RT.009/RW.003, Desa Balai Agung, Kecamatan Sungai Tebelian, Kabupaten Sintang, Kalimantan Barat 78611');
     $schoolFacebook = Setting::get('school_facebook', '');
     $schoolInstagram = Setting::get('school_instagram', '');
@@ -16,7 +16,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
             <!-- About -->
             <div>
-                <h3 class="text-lg font-bold mb-4">PPDB {{ $schoolName }}</h3>
+                <h3 class="text-lg font-bold mb-4">SPMB {{ $schoolName }}</h3>
                 <p class="text-gray-400 text-sm">
                     {{ $schoolDesc }}
                 </p>

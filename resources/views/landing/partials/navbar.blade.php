@@ -7,7 +7,7 @@
                     <i class="fas fa-graduation-cap text-3xl text-indigo-600"></i>
                 </div>
                 <div>
-                    <h1 class="text-xl font-bold text-gray-800">PPDB SMK Karya Bangsa Sintang</h1>
+                    <h1 class="text-xl font-bold text-gray-800">SPMB SMK Karya Bangsa Sintang</h1>
                     <p class="text-xs text-gray-500">Penerimaan Peserta Didik Baru</p>
                 </div>
             </div>
