@@ -218,6 +218,7 @@
                 </div>
 
                 <!-- Section 4: Upload Dokumen -->
+{{--
                 <div class="bg-white rounded-xl shadow-lg p-8">
                     <h2 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
                         <span class="bg-indigo-600 text-white w-8 h-8 rounded-full flex items-center justify-center mr-3">4</span>
@@ -283,6 +284,7 @@
                         </div>
                     </div>
                 </div>
+--}}
 
                 <!-- Persetujuan -->
                 <div class="bg-white rounded-xl shadow-lg p-8">
